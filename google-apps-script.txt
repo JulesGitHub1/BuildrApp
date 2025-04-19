@@ -1,0 +1,48 @@
+// Google Apps Script to append color codes to a Google Sheet
+// Instructions:
+// 1. Go to https://script.google.com/ and create a new project
+// 2. Copy and paste this code into the script editor
+// 3. Replace 'YOUR_SPREADSHEET_ID' with your actual spreadsheet ID (or use the one provided)
+// 4. Deploy as a web app:
+//    - Click "Deploy" > "New deployment"
+//    - Select type: "Web app"
+//    - Set "Execute as" to "Me"
+//    - Set "Who has access" to "Anyone"
+//    - Click "Deploy"
+//    - Copy the web app URL for use in our app.js
+
+function doGet(e) {
+  // Check if e.parameter exists and has colorId property
+  if (!e || !e.parameter || !e.parameter.colorId) {
+    return ContentService.createTextOutput(JSON.stringify({
+      'status': 'error',
+      'message': 'No color ID provided'
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+  
+  try {
+    // Get the color ID from the request
+    const colorId = e.parameter.colorId;
+    
+    // Open the spreadsheet (replace with your spreadsheet ID)
+    const spreadsheetId = '1A5ejlCsK3U4VR-3GbkRNVH8GLZYsISryFxmNG94NMWs';
+    const sheet = SpreadsheetApp.openById(spreadsheetId).getActiveSheet();
+    
+    // Append the color ID and timestamp to the sheet
+    const timestamp = new Date().toISOString();
+    sheet.appendRow([colorId, timestamp]);
+    
+    // Return success response
+    return ContentService.createTextOutput(JSON.stringify({
+      'status': 'success',
+      'message': 'Color ID added to spreadsheet'
+    })).setMimeType(ContentService.MimeType.JSON);
+    
+  } catch (error) {
+    // Return error response
+    return ContentService.createTextOutput(JSON.stringify({
+      'status': 'error',
+      'message': error.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
